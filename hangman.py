@@ -92,7 +92,7 @@ def play():
     the game is ended. Otherwise, if the user successfully finds the solution, they may elect to play again in
     the same mode.
     """
-    tmp = currWord
+    tmp = list(currWord)
     progress = list('-'*len(currWord))
     usedLetters = []
     success = False
@@ -114,14 +114,18 @@ def play():
             print("Please guess a letter or the whole word.")
 
         else:
+            if (guess in usedLetters and mode != Mode.INSANE):
+                print("You have already guessed this letter. Try another one.")
+                continue;
+
             usedLetters.append(guess)
             if (tmp.count(guess) > 0):
-                tmp = tmp.replace(guess, "")
-                
+                tmp = [e for e in tmp if e != guess]
+
                 for i in findOccurrences(currWord, guess):
                     progress[i] = guess
 
-                handleCorrectLetter(progress)
+                handleCorrectLetter()
                 if (len(tmp) <= 0):
                     handleCorrectAnswer(False)
                     success = True
@@ -142,13 +146,16 @@ def handleCorrectAnswer(wordGuess):
     updateScore(wordGuess)
     currWord = ""
 
-def handleCorrectLetter(progress):
+def handleCorrectLetter():
     """
     Give the user an indication that they guessed a letter correctly.
     """
     print("Correct.")
 
 def findOccurrences(s, ch):
+    """
+    Finds occurrences of the given character in the given string as a list of numbers.
+    """
     return [i for i, ltr in enumerate(s) if ltr == ch]
 
 def handleIncorrect():
