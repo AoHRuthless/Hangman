@@ -15,8 +15,8 @@ HARD_WORDS = [
 ]
 
 class Mode(Enum):
-    EASY = 0, EASY_WORDS, 7
-    HARD = 1, HARD_WORDS, 5
+    EASY = (0, EASY_WORDS, 7)
+    HARD = (1, HARD_WORDS, 5)
 
     def getList(self):
         return self.value[1]
@@ -98,6 +98,7 @@ def play():
     if (success):
         promptRestart()
     else:
+        print("The word was " + currWord + ".")
         end()
 
 def handleCorrectAnswer(wordGuess):
