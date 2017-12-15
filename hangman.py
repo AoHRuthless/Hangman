@@ -2,36 +2,32 @@ from enum import Enum
 
 import random
 import math
+import sys
 
 """
-Hard-written lists of words to sample gameplay.
+Default word list
 """
-EASY_WORDS = [
+DEFAULT = [
     'apple', 'bananas', 'elephant', 'chinchilla', 'ecstatic', 'ravine', 'cavern', 'monastery', 'eggplant',
     'garden', 'house', 'homestead', 'divine', 'wonderful', 'bottom', 'terrific', 'speed', 'coast', 'salamander',
-    'shenanigans', 'ostrich', 'giraffe', 'birch', 'cedar', 'league' 
-]
-
-HARD_WORDS = [
-	'awkward', 'blowfish', 'glowworm', 'crypt', 'fishhook', 'quark', 'kayak', 'oxygen', 'haphazard', 'gazebo', 
-	'phlegm', 'toady', 'rhythm', 'mystify', 'sphinx', 'squawk', 'yeast', 'zealous', 'quad', 'pajamas', 'kiosk', 
-	'jukebox', 'zombie', 'bagpipes', 'dwarves', 'ivory', 'sly', 'topaz'
+    'shenanigans', 'ostrich', 'giraffe', 'birch', 'cedar', 'league', 'awkward', 'blowfish', 'glowworm', 'crypt', 
+    'fishhook', 'quark', 'kayak', 'oxygen', 'haphazard', 'gazebo', 'phlegm', 'toady', 'rhythm', 'mystify', 
+    'sphinx', 'squawk', 'yeast', 'zealous', 'quad', 'pajamas', 'kiosk', 'jukebox', 'zombie', 'bagpipes', 
+    'dwarves', 'ivory', 'sly', 'topaz'
 ]
 
 """
-Mode represents the relevant list of words and the number of mistakes a user can make.
+Mode represents the number of mistakes the user is allowed to make.
 """
 class Mode(Enum):
-    EASY = (EASY_WORDS, 7)
-    HARD = (HARD_WORDS, 5)
-
-    def getList(self):
-        return self.value[0]
+    CASUAL = 9
+    NORMAL = 7
+    INSANE = 5
 
     def getNumMistakes(self):
-        return self.value[1]
+        return self.value
 
-mode = Mode.EASY
+mode = Mode.CASUAL
 currWord = ""
 mistakesLeft = -1
 score = 0
@@ -74,16 +70,20 @@ def end():
 def chooseMode():
     try:
         global mode
-        value = input("Choose a Mode:\n0 -> EASY\n1 -> HARD\n")
-        if (value == str(1)):
-            mode = Mode.HARD
-        elif (value == str(0)): # Technically useless since we start in easy mode, kept for clarity
-            mode = Mode.EASY
+        value = int(input("Choose a Mode:\n0 -> CASUAL\n1 -> NORMAL\n2 -> INSANE\n"))
+        if (value == 1):
+            mode = Mode.NORMAL
+        elif (value == 2):
+            mode = Mode.INSANE
     except ValueError: pass # Just keep in easy mode if the input is invalid
 
 def chooseWord():
     global currWord
-    currWord = random.choice(mode.getList())
+
+    words = DEFAULT
+    if (len(sys.argv) > 1):
+        words = [line.rstrip('\n') for line in open(sys.argv[1])]
+    currWord = random.choice(words)
 
 def play():
     """
@@ -93,22 +93,35 @@ def play():
     the same mode.
     """
     tmp = currWord
+    progress = list('-'*len(currWord))
+    usedLetters = []
     success = False
     while ((not success) and mistakesLeft > 0):
+        print("Word Progress          : " + "".join(progress))
+        print("Letters guessed so far : " + str(usedLetters))
+
         guess = input("Choose a letter or guess the word.")
+
         if (len(guess) > 1):
             if (guess == currWord):
                 handleCorrectAnswer(True)
                 success = True
             else:
                 handleIncorrect()
+
         elif (len(guess) == 0):
             handleIncorrect()
             print("Please guess a letter or the whole word.")
+
         else:
+            usedLetters.append(guess)
             if (tmp.count(guess) > 0):
-                handleCorrectLetter()
                 tmp = tmp.replace(guess, "")
+                
+                for i in findOccurrences(currWord, guess):
+                    progress[i] = guess
+
+                handleCorrectLetter(progress)
                 if (len(tmp) <= 0):
                     handleCorrectAnswer(False)
                     success = True
@@ -129,11 +142,14 @@ def handleCorrectAnswer(wordGuess):
     updateScore(wordGuess)
     currWord = ""
 
-def handleCorrectLetter():
+def handleCorrectLetter(progress):
     """
     Give the user an indication that they guessed a letter correctly.
     """
     print("Correct.")
+
+def findOccurrences(s, ch):
+    return [i for i, ltr in enumerate(s) if ltr == ch]
 
 def handleIncorrect():
     """
