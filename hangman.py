@@ -56,7 +56,7 @@ def promptRestart():
     Prompts the client to restart. If the user selects not to restart, end the game.
     """
     choice = input("Would you like to play again? Yes/No: ").lower()
-    if (choice == 'yes'):
+    if (choice == 'yes' or 'y'):
         restart()
     else:
         end()
