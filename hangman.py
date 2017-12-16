@@ -3,6 +3,7 @@ from enum import Enum
 import random
 import math
 import sys
+import json
 
 """
 Default word list
@@ -16,13 +17,48 @@ DEFAULT = [
     'dwarves', 'ivory', 'sly', 'topaz'
 ]
 
+
+"""
+CONFIG
+"""
+
+def getConfig():
+    """
+    Attempts to grab the settings specified by the config file.
+    """
+    try:
+        return json.loads(open('config.json').read())
+    except FileNotFoundError:
+        print('Config file not found, using default settings')
+        return saveDefaultConfig()
+
+def saveDefaultConfig():
+    """
+    Writes default settings to config.json.
+    """
+    retVal = {'casualMistakes':9, 
+              'normalMistakes':7, 
+              'insaneMistakes':5, 
+              'scoreFactor':13}
+    with open('config.json', 'w') as outfile:
+        json.dump(retVal, outfile)
+    print('Default settings written to config')
+    return retVal
+
+config = getConfig()
+
+"""
+GAME
+"""
+
+
 """
 Mode represents the number of mistakes the user is allowed to make.
 """
 class Mode(Enum):
-    CASUAL = 9
-    NORMAL = 7
-    INSANE = 5
+    CASUAL = config['casualMistakes']
+    NORMAL = config['normalMistakes']
+    INSANE = config['insaneMistakes']
 
     def getNumMistakes(self):
         return self.value
@@ -100,11 +136,12 @@ def play():
     progress = list('-'*len(currWord))
     usedLetters = []
     success = False
+    print("MISAKES TESTING > " + str(mistakesLeft))
     while ((not success) and mistakesLeft > 0):
         print("Word Progress          : " + "".join(progress))
         print("Letters guessed so far : " + str(usedLetters))
 
-        guess = input("Choose a letter or guess the word.")
+        guess = input("Choose a letter or guess the word.\n")
 
         if (len(guess) > 1):
             if (guess == currWord):
@@ -177,8 +214,9 @@ def updateScore(wordGuess):
     as the amount of unique guesses required. If the user guesses the word correctly, they are given a bonus.
     """
     global score
-    increment = max(13, 13 * (26 - len(set(currWord))) + 
-        math.ceil(182 / mode.getNumMistakes() - mistakesLeft) - 208)
+    tmp = config['scoreFactor']
+    increment = max(tmp, tmp * (2 * tmp - len(set(currWord))) + 
+        math.ceil(14 * tmp / (mode.getNumMistakes() - mistakesLeft)) - 16 * tmp)
     if (wordGuess):
         increment *= 1.25
     score += round(increment)
