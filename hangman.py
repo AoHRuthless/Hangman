@@ -39,7 +39,8 @@ def saveDefaultConfig():
     retVal = {'casualMistakes':9, 
               'normalMistakes':7, 
               'insaneMistakes':5, 
-              'scoreFactor':13}
+              'scoreFactor':13
+              'wordGuessBonus':1.25}
     with open('config.json', 'w') as outfile:
         json.dump(retVal, outfile)
     print('Default settings written to config')
@@ -218,5 +219,5 @@ def updateScore(wordGuess):
     increment = max(tmp, tmp * (2 * tmp - len(set(currWord))) + 
         math.ceil(14 * tmp / (mode.getNumMistakes() - mistakesLeft)) - 16 * tmp)
     if (wordGuess):
-        increment *= 1.25
+        increment *= config['wordGuessBonus']
     score += round(increment)
