@@ -178,6 +178,3 @@ def updateScore(wordGuess):
     if (wordGuess):
         increment *= 1.25
     score += round(increment)
-
-### EXECUTION ###
-start()
