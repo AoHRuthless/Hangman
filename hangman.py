@@ -82,7 +82,11 @@ def chooseWord():
 
     words = DEFAULT
     if (len(sys.argv) > 1):
-        words = [line.rstrip('\n') for line in open(sys.argv[1])]
+        try:
+            words = [line.rstrip('\n') for line in open(sys.argv[1])]
+        except FileNotFoundError:
+            print(sys.argv[1] + " is an invalid file name. Defaulting to program word dictionary")
+            pass
     currWord = random.choice(words)
 
 def play():
