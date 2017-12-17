@@ -6,18 +6,6 @@ import math
 ### config module
 import config
 
-"""
-Default word list
-"""
-DEFAULT = [
-    'apple', 'bananas', 'elephant', 'chinchilla', 'ecstatic', 'ravine', 'cavern', 'monastery', 'eggplant',
-    'garden', 'house', 'homestead', 'divine', 'wonderful', 'bottom', 'terrific', 'speed', 'coast', 'salamander',
-    'shenanigans', 'ostrich', 'giraffe', 'birch', 'cedar', 'league', 'awkward', 'blowfish', 'glowworm', 'crypt', 
-    'fishhook', 'quark', 'kayak', 'oxygen', 'haphazard', 'gazebo', 'phlegm', 'toady', 'rhythm', 'mystify', 
-    'sphinx', 'squawk', 'yeast', 'zealous', 'quad', 'pajamas', 'kiosk', 'jukebox', 'zombie', 'bagpipes', 
-    'dwarves', 'ivory', 'sly', 'topaz'
-]
-
 config = config.getConfig()
 
 """
@@ -39,7 +27,14 @@ class Hangman():
     currWord = ""
     mistakesLeft = -1
     score = 0
-    words = DEFAULT
+    ### Default word list
+    words = ['apple', 'bananas', 'elephant', 'chinchilla', 'ecstatic', 'ravine', 'cavern', 'monastery', 
+             'eggplant', 'garden', 'house', 'homestead', 'divine', 'wonderful', 'bottom', 'terrific', 'topaz',
+             'speed', 'coast', 'salamander', 'shenanigans', 'ostrich', 'giraffe', 'birch', 'cedar', 'sly', 
+             'league', 'awkward', 'blowfish', 'glowworm', 'crypt', 'fishhook', 'quark', 'kayak', 'oxygen', 
+             'haphazard', 'gazebo', 'phlegm', 'toady', 'rhythm', 'mystify', 'sphinx', 'squawk', 'yeast', 
+             'zealous', 'quad', 'pajamas', 'kiosk', 'jukebox', 'zombie', 'bagpipes', 'dwarves', 'ivory'
+            ]
 
     def __init__(self, gameMode = None, wordsFile = None):
         """
